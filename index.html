@@ -1,0 +1,814 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Compliment Generator</title>
+
+    <!-- 1. FONT IMPORTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700&display=swap"
+        rel="stylesheet">
+
+    <!-- 2. STYLES (CSS) -->
+    <style>
+        /* DESIGN TOKENS - "Warm Tech Minimalist" */
+        :root {
+            --bg-pearl-slate: #F8FAFC;
+            --text-midnight: #0F172A;
+            --theme-primary: #6366F1;
+            /* Default Indigo */
+            --theme-primary-rgb: 99, 102, 241;
+            --theme-primary-hover: #4F46E5;
+            --card-surface: #FFFFFF;
+            --border-light: #E2E8F0;
+
+            --font-heading: 'Outfit', sans-serif;
+            --font-body: 'Inter', sans-serif;
+        }
+
+        /* RESET & BASE */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-body);
+            background-color: var(--bg-pearl-slate);
+            background-image: radial-gradient(at 80% 0%, hsla(239, 83%, 77%, 0.2) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, hsla(14, 100%, 70%, 0.15) 0px, transparent 50%);
+            color: var(--text-midnight);
+            line-height: 1.6;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            transition: background 0.8s ease;
+        }
+
+        /* DYNAMIC BACKGROUND CLASSES */
+        body.bg-partner {
+            --theme-primary: #F43F5E;
+            /* Romantic Rose */
+            --theme-primary-rgb: 244, 63, 94;
+            --theme-primary-hover: #E11D48;
+            background-color: #fff0f5;
+            background-image: radial-gradient(at 80% 0%, hsla(340, 83%, 77%, 0.3) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, hsla(350, 100%, 70%, 0.2) 0px, transparent 50%);
+        }
+
+        body.bg-friend {
+            --theme-primary: #10B981;
+            /* Money Emerald */
+            --theme-primary-rgb: 16, 185, 129;
+            --theme-primary-hover: #059669;
+            background-color: #f0fff4;
+            background-image: radial-gradient(at 80% 0%, hsla(120, 83%, 77%, 0.2) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, hsla(140, 100%, 70%, 0.15) 0px, transparent 50%);
+        }
+
+        body.bg-colleague {
+            --theme-primary: #B45309;
+            /* Professional Brown */
+            --theme-primary-rgb: 180, 83, 9;
+            --theme-primary-hover: #92400E;
+            background-color: #fdf8f5;
+            background-image: radial-gradient(at 80% 0%, hsla(30, 50%, 60%, 0.2) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, hsla(20, 60%, 50%, 0.15) 0px, transparent 50%);
+        }
+
+        body.bg-family {
+            --theme-primary: #F59E0B;
+            /* Warm Amber */
+            --theme-primary-rgb: 245, 158, 11;
+            --theme-primary-hover: #D97706;
+            background-color: #fffaf0;
+            background-image: radial-gradient(at 80% 0%, hsla(45, 83%, 77%, 0.3) 0px, transparent 50%),
+                radial-gradient(at 0% 100%, hsla(55, 100%, 70%, 0.2) 0px, transparent 50%);
+        }
+
+        /* FLOATING BACKGROUND ELEMENTS */
+        #floating-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .floating-item {
+            position: absolute;
+            bottom: -10%;
+            animation: floatUp linear forwards;
+            opacity: 0.6;
+            filter: grayscale(0.1);
+            user-select: none;
+        }
+
+        @keyframes floatUp {
+            0% {
+                transform: translateY(0) rotate(0deg);
+                opacity: 0;
+            }
+
+            10% {
+                opacity: 0.6;
+            }
+
+            90% {
+                opacity: 0.6;
+            }
+
+            100% {
+                transform: translateY(-110vh) rotate(360deg);
+                opacity: 0;
+            }
+        }
+
+        h1,
+        h2,
+        h3 {
+            font-family: var(--font-heading);
+            color: var(--text-midnight);
+            margin-bottom: 0.5rem;
+        }
+
+        /* LAYOUT & CONTAINERS */
+        .main-container {
+            flex: 1;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem 1rem 6rem 1rem;
+            /* Extra bottom padding for sticky footer */
+            width: 100%;
+            position: relative;
+            z-index: 1;
+        }
+
+        .app-card {
+            background-color: rgba(255, 255, 255, 0.35);
+            /* Translucent glass effect */
+            backdrop-filter: blur(16px);
+            /* Stronger blur for readability */
+            -webkit-backdrop-filter: blur(16px);
+            /* Safari support */
+            max-width: 500px;
+            width: 100%;
+            border-radius: 16px;
+            padding: 2.5rem 2rem;
+            box-shadow: 0 20px 40px -10px rgba(15, 23, 42, 0.08), 0 8px 10px -6px rgba(15, 23, 42, 0.03);
+            border-top: 5px solid var(--theme-primary);
+            border-left: 1px solid rgba(255, 255, 255, 0.6);
+            border-right: 1px solid rgba(255, 255, 255, 0.6);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+            transition: border-color 0.8s ease;
+        }
+
+        .header-section {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+
+        .header-section h1 {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .header-section p {
+            color: #64748B;
+            font-size: 0.95rem;
+        }
+
+        /* FORM ELEMENTS */
+        .form-group {
+            margin-bottom: 1.25rem;
+            text-align: left;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.875rem 1rem;
+            font-family: var(--font-body);
+            font-size: 1rem;
+            color: var(--text-midnight);
+            background-color: rgba(255, 255, 255, 0.4);
+            /* Translucent inputs */
+            border: 1px solid rgba(255, 255, 255, 0.6);
+            border-radius: 8px;
+            transition: all 0.2s ease;
+            appearance: none;
+        }
+
+        select.form-control {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%230F172A' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+            padding-right: 2.5rem;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--theme-primary);
+            box-shadow: 0 0 0 3px rgba(var(--theme-primary-rgb), 0.15);
+            background-color: rgba(255, 255, 255, 0.8);
+            /* Becomes more solid when typing */
+        }
+
+        /* BUTTONS */
+        .btn-primary {
+            width: 100%;
+            background: linear-gradient(135deg, var(--theme-primary), var(--theme-primary-hover));
+            color: #FFFFFF;
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 1.05rem;
+            padding: 1rem;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin-top: 1.5rem;
+            box-shadow: 0 4px 12px rgba(var(--theme-primary-rgb), 0.3);
+        }
+
+        .btn-primary:hover {
+            box-shadow: 0 6px 16px rgba(var(--theme-primary-rgb), 0.4);
+            transform: translateY(-2px);
+        }
+
+        .btn-primary:active {
+            transform: scale(0.98);
+            box-shadow: 0 2px 8px rgba(var(--theme-primary-rgb), 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.8;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background-color: transparent;
+            color: var(--theme-primary);
+            border: 1px solid var(--theme-primary);
+            padding: 0.6rem 1.2rem;
+            border-radius: 6px;
+            font-weight: 500;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: var(--font-body);
+            margin-top: 1rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .btn-secondary:hover {
+            background-color: rgba(var(--theme-primary-rgb), 0.05);
+        }
+
+        /* LOADING SPINNER */
+        .spinner {
+            display: none;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: #FFFFFF;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .is-loading .spinner {
+            display: inline-block;
+        }
+
+        .is-loading .btn-text {
+            display: none;
+        }
+
+        /* RESULTS AREA */
+        .results-area {
+            display: none;
+            margin-top: 2rem;
+            padding-top: 2rem;
+            border-top: 1px solid var(--border-light);
+            text-align: center;
+            animation: fadeIn 0.4s ease forwards;
+        }
+
+        .results-area.active {
+            display: block;
+        }
+
+        .compliment-text {
+            font-family: var(--font-heading);
+            font-size: 1.4rem;
+            font-weight: 500;
+            color: var(--theme-primary);
+            line-height: 1.4;
+            margin-bottom: 1.5rem;
+            padding: 2rem 1.5rem;
+            background: linear-gradient(to bottom right, rgba(var(--theme-primary-rgb), 0.08), rgba(var(--theme-primary-rgb), 0.02));
+            border: 1px dashed rgba(var(--theme-primary-rgb), 0.3);
+            border-radius: 12px;
+            position: relative;
+            box-shadow: inset 0 2px 10px rgba(255, 255, 255, 0.5);
+            transition: all 0.8s ease;
+        }
+
+        .compliment-text::before {
+            content: '"';
+            font-size: 4rem;
+            color: rgba(var(--theme-primary-rgb), 0.15);
+            position: absolute;
+            top: -1rem;
+            left: 1rem;
+            font-family: serif;
+            transition: color 0.8s ease;
+        }
+
+        /* STICKY FOOTER & LEAD MAGNET */
+        .sticky-footer {
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+            background-color: rgba(255, 255, 255, 0.4);
+            /* Translucent footer */
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-top: 1px solid rgba(255, 255, 255, 0.4);
+            padding: 1rem;
+            text-align: center;
+            font-size: 0.85rem;
+            color: #64748B;
+            box-shadow: 0 -4px 6px -1px rgba(15, 23, 42, 0.05);
+            z-index: 10;
+        }
+
+        .sticky-footer a {
+            color: var(--theme-primary);
+            text-decoration: none;
+            font-weight: 600;
+            margin-left: 0.5rem;
+            cursor: pointer;
+            transition: color 0.8s ease;
+        }
+
+        .sticky-footer a:hover {
+            text-decoration: underline;
+        }
+
+        /* MODAL */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background-color: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(4px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 100;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+            padding: 1rem;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .modal-content {
+            background-color: var(--card-surface);
+            border-radius: 12px;
+            padding: 2.5rem 2rem;
+            max-width: 450px;
+            width: 100%;
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+            text-align: center;
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0);
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #64748B;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--text-midnight);
+        }
+
+        .modal-title {
+            color: var(--theme-primary);
+            margin-bottom: 1rem;
+        }
+
+        .modal-body {
+            color: #475569;
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        .cta-button {
+            display: inline-block;
+            background-color: var(--theme-primary);
+            color: white;
+            text-decoration: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: background-color 0.2s ease;
+        }
+
+        .cta-button:hover {
+            background-color: var(--theme-primary-hover);
+        }
+
+        /* ANIMATIONS */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 600px) {
+            .app-card {
+                padding: 2rem 1.5rem;
+            }
+
+            .compliment-text {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- DYNAMIC BACKGROUND -->
+    <div id="floating-bg"></div>
+
+    <!-- MAIN APP CONTAINER -->
+    <main class="main-container">
+        <div class="app-card">
+            <div class="header-section">
+                <h1>Compliment Generator</h1>
+                <p>Brighten someone's day with AI-crafted kindness.</p>
+            </div>
+
+            <form id="compliment-form">
+                <div class="form-group">
+                    <label for="targetName">Who is this for?</label>
+                    <input type="text" id="targetName" class="form-control" placeholder="e.g., Alex, Sarah, My Team"
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label for="relationship">Relationship</label>
+                    <select id="relationship" class="form-control" required>
+                        <option value="" disabled selected>Select relationship...</option>
+                        <option value="friend">Friend</option>
+                        <option value="partner">Partner</option>
+                        <option value="colleague">Colleague / Coworker</option>
+                        <option value="family">Family Member</option>
+                        <option value="stranger">Acquaintance</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="tone">Desired Tone</label>
+                    <select id="tone" class="form-control" required>
+                        <option value="" disabled selected>Select a tone...</option>
+                        <option value="sweet">Sweet & Genuine</option>
+                        <option value="funny">Funny & Witty</option>
+                        <option value="professional">Professional & Appreciative</option>
+                        <option value="poetic">Poetic & Deep</option>
+                    </select>
+                </div>
+
+                <button type="submit" id="generate-btn" class="btn-primary">
+                    <span class="btn-text">Generate Compliment</span>
+                    <span class="spinner"></span>
+                    <span class="loading-text" style="display: none;">Crafting...</span>
+                </button>
+            </form>
+
+            <!-- RESULTS AREA -->
+            <div id="results-area" class="results-area">
+                <p id="compliment-output" class="compliment-text"></p>
+                <button id="copy-btn" class="btn-secondary">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                    </svg>
+                    Copy to Clipboard
+                </button>
+                <span id="copy-success"
+                    style="display:none; color: var(--theme-primary); font-size: 0.85rem; margin-left: 10px; font-weight: 500;">Copied!</span>
+            </div>
+        </div>
+    </main>
+
+    <!-- STICKY FOOTER -->
+    <div class="sticky-footer">
+        <a id="how-it-works-trigger">How it Works</a>
+    </div>
+
+    <!-- HOW IT WORKS MODAL -->
+    <div id="info-modal" class="modal-overlay">
+        <div class="modal-content">
+            <button class="modal-close" id="close-modal">&times;</button>
+            <h2 class="modal-title">Behind the Magic</h2>
+            <div class="modal-body">
+                <p>This tool captures your input and securely sends it via webhook to an automated workflow.</p>
+                <br>
+                <p>From there, an AI engine processes the relationship and tone to craft a highly personalized
+                    compliment, returning it instantly to your screen.</p>
+                <br>
+                <p>Want to build intelligent workflows like this for your own business?</p>
+            </div>
+            <a href="#" class="cta-button" onclick="alert('Redirecting to calendar...'); return false;">Book a System
+                Consultation</a>
+        </div>
+    </div>
+
+    <!-- 3. SCRIPTS (Vanilla JS) -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- DOM Elements ---
+            const form = document.getElementById('compliment-form');
+            const submitBtn = document.getElementById('generate-btn');
+            const btnText = submitBtn.querySelector('.btn-text');
+            const loadingText = submitBtn.querySelector('.loading-text');
+            const resultsArea = document.getElementById('results-area');
+            const complimentOutput = document.getElementById('compliment-output');
+            const copyBtn = document.getElementById('copy-btn');
+            const copySuccess = document.getElementById('copy-success');
+
+            // Modal Elements
+            const modal = document.getElementById('info-modal');
+            const modalTrigger = document.getElementById('how-it-works-trigger');
+            const modalClose = document.getElementById('close-modal');
+
+            // --- Dynamic Background Logic ---
+            const bgContainer = document.getElementById('floating-bg');
+            const relationshipSelect = document.getElementById('relationship');
+            let spawnInterval;
+
+            const bgThemes = {
+                partner: { emojis: ['❤️', '💖', '💕', '💘'], class: 'bg-partner' },
+                friend: { emojis: ['💵', '💰', '💸', '🪙'], class: 'bg-friend' },
+                colleague: { emojis: ['👔', '💼', '📈', '☕'], class: 'bg-colleague' },
+                family: { emojis: ['🔗', '🤝', '♾️', '🏡'], class: 'bg-family' },
+                stranger: { emojis: ['✨', '👋', '🌟'], class: '' },
+                default: { emojis: [], class: '' }
+            };
+
+            function updateBackground(rel) {
+                // Clear previous interval and elements
+                clearInterval(spawnInterval);
+                bgContainer.innerHTML = '';
+
+                // Reset body class and apply new one
+                document.body.className = '';
+                const theme = bgThemes[rel] || bgThemes['default'];
+                if (theme.class) {
+                    document.body.classList.add(theme.class);
+                }
+
+                // Start spawning new elements
+                if (theme.emojis.length > 0) {
+                    spawnInterval = setInterval(() => {
+                        const el = document.createElement('div');
+                        el.className = 'floating-item';
+                        // Pick random emoji
+                        el.innerText = theme.emojis[Math.floor(Math.random() * theme.emojis.length)];
+
+                        // Randomize horizontal position, duration, and size
+                        el.style.left = Math.random() * 100 + 'vw';
+                        el.style.animationDuration = (Math.random() * 5 + 7) + 's'; // 7 to 12 seconds
+                        el.style.fontSize = (Math.random() * 2 + 1.5) + 'rem'; // 1.5rem to 3.5rem
+
+                        bgContainer.appendChild(el);
+
+                        // Cleanup element after animation completes
+                        setTimeout(() => {
+                            if (el.parentNode === bgContainer) {
+                                el.remove();
+                            }
+                        }, 13000);
+                    }, 600); // Spawn every 600ms
+                }
+            }
+
+            // Listen for changes on the relationship dropdown
+            relationshipSelect.addEventListener('change', (e) => {
+                updateBackground(e.target.value);
+            });
+
+            // --- Webhook Configuration ---
+            // Replace this URL with your actual webhook endpoint
+            const WEBHOOK_URL = 'https://your-webhook-url.com/webhook/generate-compliment';
+
+            // --- Form Submission Handler ---
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+
+                // 1. Gather Input Data
+                const payload = {
+                    name: document.getElementById('targetName').value.trim(),
+                    relationship: document.getElementById('relationship').value,
+                    tone: document.getElementById('tone').value
+                };
+
+                // 2. Set Loading State
+                submitBtn.classList.add('is-loading');
+                submitBtn.disabled = true;
+                btnText.style.display = 'none';
+                loadingText.style.display = 'inline-block';
+                resultsArea.classList.remove('active');
+
+                // 3. Send POST Request to Webhook
+                try {
+                    const response = await fetch(WEBHOOK_URL, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Accept': 'application/json'
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    let compliment = "";
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        // Assuming the webhook returns { "compliment": "..." }
+                        compliment = data.compliment || "Here is a wonderful compliment just for you!";
+                    } else {
+                        // Fallback logic for demonstration purposes if webhook isn't active
+                        throw new Error('Webhook unavailable');
+                    }
+
+                    displayResult(compliment);
+
+                } catch (error) {
+                    console.warn("Webhook fetch failed, using fallback generation for demonstration.", error);
+
+                    // Fallback local generation to ensure UI remains testable
+                    setTimeout(() => {
+                        const fallbackCompliment = generateFallbackCompliment(payload.name, payload.relationship, payload.tone);
+                        displayResult(fallbackCompliment);
+                    }, 1200); // Simulate network delay
+                }
+            });
+
+            // --- Helper: Display Result ---
+            function displayResult(text) {
+                // Remove loading state
+                submitBtn.classList.remove('is-loading');
+                submitBtn.disabled = false;
+                btnText.style.display = 'inline-block';
+                loadingText.style.display = 'none';
+
+                // Render result
+                complimentOutput.textContent = text;
+                resultsArea.classList.add('active');
+            }
+
+            // --- Copy to Clipboard Handler ---
+            copyBtn.addEventListener('click', () => {
+                const textToCopy = complimentOutput.textContent;
+
+                // Using document.execCommand('copy') as requested for iframe compatibility
+                const textArea = document.createElement("textarea");
+                textArea.value = textToCopy;
+
+                // Move out of screen
+                textArea.style.position = "absolute";
+                textArea.style.left = "-999999px";
+
+                document.body.appendChild(textArea);
+                textArea.select();
+
+                try {
+                    document.execCommand('copy');
+
+                    // Visual feedback
+                    copySuccess.style.display = 'inline';
+                    setTimeout(() => {
+                        copySuccess.style.display = 'none';
+                    }, 2000);
+                } catch (err) {
+                    console.error('Failed to copy text', err);
+                } finally {
+                    textArea.remove();
+                }
+            });
+
+            // --- Modal Handlers ---
+            modalTrigger.addEventListener('click', (e) => {
+                e.preventDefault();
+                modal.classList.add('active');
+            });
+
+            modalClose.addEventListener('click', () => {
+                modal.classList.remove('active');
+            });
+
+            // Close modal when clicking outside content
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+
+            // --- Fallback Content Generator (For UI testing without live webhook) ---
+            function generateFallbackCompliment(name, relationship, tone) {
+                const relText = relationship === 'stranger' ? 'person' : relationship;
+                const partnerText = relationship === 'partner' ? 'partner' : relText;
+
+                const templates = {
+                    funny: [
+                        `${name}, you're the only ${relText} I'd share my snacks with, and that's saying a lot.`,
+                        `I'm not saying you're the best ${relText} ever, ${name}, but I'd definitely bet my favorite coffee on it.`,
+                        `${name}, if being awesome was a crime, you'd be serving a life sentence as my ${relText}.`,
+                        `I love how we can just look at each other and know exactly what the other is thinking, ${name}. Usually it's about food.`
+                    ],
+                    sweet: [
+                        `${name}, your presence lights up every room. Being your ${partnerText} is a true gift.`,
+                        `I just wanted to remind you, ${name}, how much joy you bring to my life. You're such a wonderful ${relText}.`,
+                        `${name}, you have a heart of gold. I'm so incredibly lucky to have a ${relText} like you in my corner.`,
+                        `Every time I think of you, ${name}, I can't help but smile. You make the world brighter just by being in it.`
+                    ],
+                    professional: [
+                        `${name}, your dedication and insight make you an invaluable ${relText}. Thank you for everything you do.`,
+                        `I truly appreciate your hard work and positive attitude, ${name}. You set a phenomenal example as a ${relText}.`,
+                        `${name}, your problem-solving skills and teamwork are truly unmatched. I'm proud to know you as a ${relText}.`,
+                        `Thank you, ${name}, for consistently bringing your A-game. It makes working with you an absolute pleasure.`
+                    ],
+                    poetic: [
+                        `${name}, like a rare constellation, your spirit brings guidance and beauty to my world as a ${relText}.`,
+                        `In the symphony of life, ${name}, your melody is the one that resonates most beautifully with me.`,
+                        `${name}, your kindness is a gentle breeze that makes the world a softer place for everyone around you.`,
+                        `To know you, ${name}, is to witness poetry in motion. You elevate the very concept of a ${relText}.`
+                    ]
+                };
+
+                const selectedTemplates = templates[tone] || templates['sweet'];
+                const randomIndex = Math.floor(Math.random() * selectedTemplates.length);
+                return selectedTemplates[randomIndex];
+            }
+        });
+    </script>
+</body>
+
+</html>
