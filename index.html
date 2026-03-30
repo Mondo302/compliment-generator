@@ -133,7 +133,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 2rem 1rem 6rem 1rem;
+            padding: 2rem 1rem;
             width: 100%;
             position: relative;
             z-index: 1;
@@ -351,115 +351,6 @@
             transition: color 0.8s ease;
         }
 
-        /* STICKY FOOTER & LEAD MAGNET */
-        .sticky-footer {
-            position: fixed;
-            bottom: 0;
-            width: 100%;
-            background-color: rgba(255, 255, 255, 0.4);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border-top: 1px solid rgba(255, 255, 255, 0.4);
-            padding: 1rem;
-            text-align: center;
-            font-size: 0.85rem;
-            color: #64748B;
-            box-shadow: 0 -4px 6px -1px rgba(15, 23, 42, 0.05);
-            z-index: 10;
-        }
-
-        .sticky-footer a {
-            color: var(--theme-primary);
-            text-decoration: none;
-            font-weight: 600;
-            margin-left: 0.5rem;
-            cursor: pointer;
-            transition: color 0.8s ease;
-        }
-
-        .sticky-footer a:hover {
-            text-decoration: underline;
-        }
-
-        /* MODAL */
-        .modal-overlay {
-            position: fixed;
-            inset: 0;
-            background-color: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(4px);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.3s ease;
-            padding: 1rem;
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .modal-content {
-            background-color: var(--card-surface);
-            border-radius: 12px;
-            padding: 2.5rem 2rem;
-            max-width: 450px;
-            width: 100%;
-            position: relative;
-            transform: translateY(20px);
-            transition: transform 0.3s ease;
-            text-align: center;
-        }
-
-        .modal-overlay.active .modal-content {
-            transform: translateY(0);
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            color: #64748B;
-            cursor: pointer;
-            transition: color 0.2s ease;
-        }
-
-        .modal-close:hover {
-            color: var(--text-midnight);
-        }
-
-        .modal-title {
-            color: var(--theme-primary);
-            margin-bottom: 1rem;
-        }
-
-        .modal-body {
-            color: #475569;
-            margin-bottom: 2rem;
-            font-size: 0.95rem;
-        }
-
-        .cta-button {
-            display: inline-block;
-            background-color: var(--theme-primary);
-            color: white;
-            text-decoration: none;
-            padding: 0.75rem 1.5rem;
-            border-radius: 8px;
-            font-weight: 600;
-            transition: background-color 0.2s ease;
-        }
-
-        .cta-button:hover {
-            background-color: var(--theme-primary-hover);
-        }
-
         /* ANIMATIONS */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
@@ -558,7 +449,6 @@
         </div>
     </main>
 
-
     <!-- 3. SCRIPTS (Vanilla JS) -->
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -574,12 +464,6 @@
             const copySuccess = document.getElementById('copy-success');
             const relationshipSelect = document.getElementById('relationship');
             const nameInput = document.getElementById('targetName');
-            
-            // Modal Elements
-            const modal = document.getElementById('info-modal');
-            const modalTrigger = document.getElementById('how-it-works-trigger');
-            const modalClose = document.getElementById('close-modal');
-            const bookingBtn = document.getElementById('booking-btn');
 
             // --- Dynamic Background Logic ---
             const bgContainer = document.getElementById('floating-bg');
@@ -597,7 +481,7 @@
             function updateBackground(rel) {
                 // Clear previous interval and elements
                 clearInterval(spawnInterval);
-                bgContainer.innerHTML = '';
+                if (bgContainer) bgContainer.innerHTML = '';
                 
                 // Reset body class and apply new one
                 document.body.className = '';
@@ -607,7 +491,7 @@
                 }
 
                 // Start spawning new elements
-                if (theme.emojis.length > 0) {
+                if (theme.emojis.length > 0 && bgContainer) {
                     spawnInterval = setInterval(() => {
                         const el = document.createElement('div');
                         el.className = 'floating-item';
@@ -635,97 +519,103 @@
             updateBackground('default');
 
             // Listen for changes on the relationship dropdown
-            relationshipSelect.addEventListener('change', (e) => {
-                updateBackground(e.target.value);
-            });
+            if (relationshipSelect) {
+                relationshipSelect.addEventListener('change', (e) => {
+                    updateBackground(e.target.value);
+                });
+            }
 
             // --- Webhook Configuration ---
             const WEBHOOK_URL = 'https://your-webhook-url.com/webhook/generate-compliment';
 
             // --- Form Submission Handler (Compliments) ---
-            form.addEventListener('submit', async (e) => {
-                e.preventDefault();
+            if (form) {
+                form.addEventListener('submit', async (e) => {
+                    e.preventDefault();
 
-                const toneSelect = document.getElementById('tone');
-                
-                // Custom validation since we decoupled the two submit actions
-                if (!toneSelect.value) {
-                    toneSelect.setCustomValidity("Please select a tone for your compliment.");
-                    toneSelect.reportValidity();
-                    return;
-                } else {
-                    toneSelect.setCustomValidity("");
-                }
-
-                const payload = {
-                    name: nameInput.value.trim(),
-                    relationship: relationshipSelect.value,
-                    tone: toneSelect.value
-                };
-
-                setLoadingState(true);
-
-                try {
-                    const response = await fetch(WEBHOOK_URL, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                            'Accept': 'application/json'
-                        },
-                        body: JSON.stringify(payload)
-                    });
-
-                    let compliment = "";
-                    if (response.ok) {
-                        const data = await response.json();
-                        compliment = data.compliment || "Here is a wonderful compliment just for you!";
+                    const toneSelect = document.getElementById('tone');
+                    
+                    // Custom validation since we decoupled the two submit actions
+                    if (!toneSelect.value) {
+                        toneSelect.setCustomValidity("Please select a tone for your compliment.");
+                        toneSelect.reportValidity();
+                        return;
                     } else {
-                        throw new Error('Webhook unavailable');
+                        toneSelect.setCustomValidity("");
                     }
-                    displayResult(compliment);
-                } catch (error) {
-                    console.warn("Webhook fetch failed, using fallback generation.", error);
-                    setTimeout(() => {
-                        const fallbackCompliment = generateFallbackCompliment(payload.name, payload.relationship, payload.tone);
-                        displayResult(fallbackCompliment);
-                    }, 1200);
-                }
-            });
+
+                    const payload = {
+                        name: nameInput.value.trim(),
+                        relationship: relationshipSelect.value,
+                        tone: toneSelect.value
+                    };
+
+                    setLoadingState(true);
+
+                    try {
+                        const response = await fetch(WEBHOOK_URL, {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                                'Accept': 'application/json'
+                            },
+                            body: JSON.stringify(payload)
+                        });
+
+                        let compliment = "";
+                        if (response.ok) {
+                            const data = await response.json();
+                            compliment = data.compliment || "Here is a wonderful compliment just for you!";
+                        } else {
+                            throw new Error('Webhook unavailable');
+                        }
+                        displayResult(compliment);
+                    } catch (error) {
+                        console.warn("Webhook fetch failed, using fallback generation.", error);
+                        setTimeout(() => {
+                            const fallbackCompliment = generateFallbackCompliment(payload.name, payload.relationship, payload.tone);
+                            displayResult(fallbackCompliment);
+                        }, 1200);
+                    }
+                });
+            }
 
             // --- Joke / Roast Button Handler ---
-            jokeBtn.addEventListener('click', () => {
-                const jokeToneSelect = document.getElementById('joke-tone');
-                
-                // Custom validation to ensure required fields are filled without triggering compliment validation
-                if (!nameInput.value) { nameInput.reportValidity(); return; }
-                if (!relationshipSelect.value) { relationshipSelect.reportValidity(); return; }
-                
-                if (!jokeToneSelect.value) {
-                    jokeToneSelect.setCustomValidity("Please select a tone for your joke.");
-                    jokeToneSelect.reportValidity();
-                    return;
-                } else {
-                    jokeToneSelect.setCustomValidity("");
-                }
+            if (jokeBtn) {
+                jokeBtn.addEventListener('click', () => {
+                    const jokeToneSelect = document.getElementById('joke-tone');
+                    
+                    // Custom validation to ensure required fields are filled without triggering compliment validation
+                    if (!nameInput.value) { nameInput.reportValidity(); return; }
+                    if (!relationshipSelect.value) { relationshipSelect.reportValidity(); return; }
+                    
+                    if (!jokeToneSelect.value) {
+                        jokeToneSelect.setCustomValidity("Please select a tone for your joke.");
+                        jokeToneSelect.reportValidity();
+                        return;
+                    } else {
+                        jokeToneSelect.setCustomValidity("");
+                    }
 
-                const name = nameInput.value.trim();
-                const rel = relationshipSelect.value;
-                const jokeTone = jokeToneSelect.value;
-                
-                // Set temporary UI state for the joke button
-                const originalText = jokeBtn.querySelector('.btn-text').innerText;
-                jokeBtn.querySelector('.btn-text').innerText = "Cooking...";
-                jokeBtn.disabled = true;
-                resultsArea.classList.remove('active');
+                    const name = nameInput.value.trim();
+                    const rel = relationshipSelect.value;
+                    const jokeTone = jokeToneSelect.value;
+                    
+                    // Set temporary UI state for the joke button
+                    const originalText = jokeBtn.querySelector('.btn-text').innerText;
+                    jokeBtn.querySelector('.btn-text').innerText = "Cooking...";
+                    jokeBtn.disabled = true;
+                    if (resultsArea) resultsArea.classList.remove('active');
 
-                // Simulate slight delay for effect
-                setTimeout(() => {
-                    const jokeText = generateEdgyJoke(name, rel, jokeTone);
-                    displayResult(jokeText);
-                    jokeBtn.querySelector('.btn-text').innerText = originalText;
-                    jokeBtn.disabled = false;
-                }, 800);
-            });
+                    // Simulate slight delay for effect
+                    setTimeout(() => {
+                        const jokeText = generateEdgyJoke(name, rel, jokeTone);
+                        displayResult(jokeText);
+                        jokeBtn.querySelector('.btn-text').innerText = originalText;
+                        jokeBtn.disabled = false;
+                    }, 800);
+                });
+            }
 
             // --- UI Helpers ---
             function setLoadingState(isLoading) {
@@ -734,7 +624,7 @@
                     submitBtn.disabled = true;
                     btnText.style.display = 'none';
                     loadingText.style.display = 'inline-block';
-                    resultsArea.classList.remove('active');
+                    if (resultsArea) resultsArea.classList.remove('active');
                 } else {
                     submitBtn.classList.remove('is-loading');
                     submitBtn.disabled = false;
@@ -745,51 +635,36 @@
 
             function displayResult(text) {
                 setLoadingState(false);
-                complimentOutput.textContent = text;
-                resultsArea.classList.add('active');
+                if (complimentOutput) complimentOutput.textContent = text;
+                if (resultsArea) resultsArea.classList.add('active');
             }
 
             // --- Copy to Clipboard Handler ---
-            copyBtn.addEventListener('click', () => {
-                const textToCopy = complimentOutput.textContent;
-                const textArea = document.createElement("textarea");
-                textArea.value = textToCopy;
-                textArea.style.position = "absolute";
-                textArea.style.left = "-999999px";
-                document.body.appendChild(textArea);
-                textArea.select();
-                
-                try {
-                    document.execCommand('copy');
-                    copySuccess.style.display = 'inline';
-                    setTimeout(() => {
-                        copySuccess.style.display = 'none';
-                    }, 2000);
-                } catch (err) {
-                    console.error('Failed to copy text', err);
-                } finally {
-                    textArea.remove();
-                }
-            });
-
-            // --- Modal Handlers ---
-            modalTrigger.addEventListener('click', (e) => {
-                e.preventDefault();
-                modal.classList.add('active');
-            });
-            modalClose.addEventListener('click', () => {
-                modal.classList.remove('active');
-            });
-            modal.addEventListener('click', (e) => {
-                if (e.target === modal) {
-                    modal.classList.remove('active');
-                }
-            });
-            bookingBtn.addEventListener('click', (e) => {
-                e.preventDefault();
-                bookingBtn.innerText = "Redirecting...";
-                setTimeout(() => { bookingBtn.innerText = "Book a System Consultation"; }, 2000);
-            });
+            if (copyBtn) {
+                copyBtn.addEventListener('click', () => {
+                    const textToCopy = complimentOutput.textContent;
+                    const textArea = document.createElement("textarea");
+                    textArea.value = textToCopy;
+                    textArea.style.position = "absolute";
+                    textArea.style.left = "-999999px";
+                    document.body.appendChild(textArea);
+                    textArea.select();
+                    
+                    try {
+                        document.execCommand('copy');
+                        if (copySuccess) {
+                            copySuccess.style.display = 'inline';
+                            setTimeout(() => {
+                                copySuccess.style.display = 'none';
+                            }, 2000);
+                        }
+                    } catch (err) {
+                        console.error('Failed to copy text', err);
+                    } finally {
+                        textArea.remove();
+                    }
+                });
+            }
 
             // --- Content Generators ---
             function generateEdgyJoke(name, relationship, tone) {
