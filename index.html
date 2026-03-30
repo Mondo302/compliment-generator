@@ -1,31 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Compliment Generator</title>
-
+    
     <!-- 1. FONT IMPORTS -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700&display=swap"
-        rel="stylesheet">
-
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+    
     <!-- 2. STYLES (CSS) -->
     <style>
         /* DESIGN TOKENS - "Warm Tech Minimalist" */
         :root {
             --bg-pearl-slate: #F8FAFC;
             --text-midnight: #0F172A;
-            --theme-primary: #6366F1;
-            /* Default Indigo */
+            --theme-primary: #6366F1; /* Default Indigo */
             --theme-primary-rgb: 99, 102, 241;
             --theme-primary-hover: #4F46E5;
             --card-surface: #FFFFFF;
             --border-light: #E2E8F0;
-
+            
             --font-heading: 'Outfit', sans-serif;
             --font-body: 'Inter', sans-serif;
         }
@@ -40,55 +36,58 @@
         body {
             font-family: var(--font-body);
             background-color: var(--bg-pearl-slate);
-            background-image: radial-gradient(at 80% 0%, hsla(239, 83%, 77%, 0.2) 0px, transparent 50%),
-                radial-gradient(at 0% 100%, hsla(14, 100%, 70%, 0.15) 0px, transparent 50%);
             color: var(--text-midnight);
             line-height: 1.6;
             display: flex;
             flex-direction: column;
             min-height: 100vh;
             transition: background 0.8s ease;
+            background-size: 200% 200%;
+            animation: gradientShift 15s ease infinite;
+        }
+
+        @keyframes gradientShift {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
 
         /* DYNAMIC BACKGROUND CLASSES */
+        body.bg-default {
+            background-image: radial-gradient(at 20% 20%, hsla(280,83%,77%,0.3) 0px, transparent 50%),
+                              radial-gradient(at 80% 80%, hsla(190,100%,70%,0.2) 0px, transparent 50%);
+        }
         body.bg-partner {
-            --theme-primary: #F43F5E;
-            /* Romantic Rose */
+            --theme-primary: #F43F5E; /* Romantic Rose */
             --theme-primary-rgb: 244, 63, 94;
             --theme-primary-hover: #E11D48;
             background-color: #fff0f5;
-            background-image: radial-gradient(at 80% 0%, hsla(340, 83%, 77%, 0.3) 0px, transparent 50%),
-                radial-gradient(at 0% 100%, hsla(350, 100%, 70%, 0.2) 0px, transparent 50%);
+            background-image: radial-gradient(at 80% 0%, hsla(340,83%,77%,0.3) 0px, transparent 50%),
+                              radial-gradient(at 0% 100%, hsla(350,100%,70%,0.2) 0px, transparent 50%);
         }
-
         body.bg-friend {
-            --theme-primary: #10B981;
-            /* Money Emerald */
+            --theme-primary: #10B981; /* Money Emerald */
             --theme-primary-rgb: 16, 185, 129;
             --theme-primary-hover: #059669;
             background-color: #f0fff4;
-            background-image: radial-gradient(at 80% 0%, hsla(120, 83%, 77%, 0.2) 0px, transparent 50%),
-                radial-gradient(at 0% 100%, hsla(140, 100%, 70%, 0.15) 0px, transparent 50%);
+            background-image: radial-gradient(at 80% 0%, hsla(120,83%,77%,0.2) 0px, transparent 50%),
+                              radial-gradient(at 0% 100%, hsla(140,100%,70%,0.15) 0px, transparent 50%);
         }
-
         body.bg-colleague {
-            --theme-primary: #B45309;
-            /* Professional Brown */
+            --theme-primary: #B45309; /* Professional Brown */
             --theme-primary-rgb: 180, 83, 9;
             --theme-primary-hover: #92400E;
             background-color: #fdf8f5;
-            background-image: radial-gradient(at 80% 0%, hsla(30, 50%, 60%, 0.2) 0px, transparent 50%),
-                radial-gradient(at 0% 100%, hsla(20, 60%, 50%, 0.15) 0px, transparent 50%);
+            background-image: radial-gradient(at 80% 0%, hsla(30,50%,60%,0.2) 0px, transparent 50%),
+                              radial-gradient(at 0% 100%, hsla(20,60%,50%,0.15) 0px, transparent 50%);
         }
-
         body.bg-family {
-            --theme-primary: #F59E0B;
-            /* Warm Amber */
+            --theme-primary: #F59E0B; /* Warm Amber */
             --theme-primary-rgb: 245, 158, 11;
             --theme-primary-hover: #D97706;
             background-color: #fffaf0;
-            background-image: radial-gradient(at 80% 0%, hsla(45, 83%, 77%, 0.3) 0px, transparent 50%),
-                radial-gradient(at 0% 100%, hsla(55, 100%, 70%, 0.2) 0px, transparent 50%);
+            background-image: radial-gradient(at 80% 0%, hsla(45,83%,77%,0.3) 0px, transparent 50%),
+                              radial-gradient(at 0% 100%, hsla(55,100%,70%,0.2) 0px, transparent 50%);
         }
 
         /* FLOATING BACKGROUND ELEMENTS */
@@ -113,28 +112,13 @@
         }
 
         @keyframes floatUp {
-            0% {
-                transform: translateY(0) rotate(0deg);
-                opacity: 0;
-            }
-
-            10% {
-                opacity: 0.6;
-            }
-
-            90% {
-                opacity: 0.6;
-            }
-
-            100% {
-                transform: translateY(-110vh) rotate(360deg);
-                opacity: 0;
-            }
+            0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+            10% { opacity: 0.6; }
+            90% { opacity: 0.6; }
+            100% { transform: translateY(-110vh) rotate(360deg); opacity: 0; }
         }
 
-        h1,
-        h2,
-        h3 {
+        h1, h2, h3 {
             font-family: var(--font-heading);
             color: var(--text-midnight);
             margin-bottom: 0.5rem;
@@ -147,7 +131,6 @@
             justify-content: center;
             align-items: center;
             padding: 2rem 1rem 6rem 1rem;
-            /* Extra bottom padding for sticky footer */
             width: 100%;
             position: relative;
             z-index: 1;
@@ -155,11 +138,8 @@
 
         .app-card {
             background-color: rgba(255, 255, 255, 0.35);
-            /* Translucent glass effect */
             backdrop-filter: blur(16px);
-            /* Stronger blur for readability */
             -webkit-backdrop-filter: blur(16px);
-            /* Safari support */
             max-width: 500px;
             width: 100%;
             border-radius: 16px;
@@ -207,7 +187,6 @@
             font-size: 1rem;
             color: var(--text-midnight);
             background-color: rgba(255, 255, 255, 0.4);
-            /* Translucent inputs */
             border: 1px solid rgba(255, 255, 255, 0.6);
             border-radius: 8px;
             transition: all 0.2s ease;
@@ -227,17 +206,22 @@
             border-color: var(--theme-primary);
             box-shadow: 0 0 0 3px rgba(var(--theme-primary-rgb), 0.15);
             background-color: rgba(255, 255, 255, 0.8);
-            /* Becomes more solid when typing */
         }
 
         /* BUTTONS */
+        .button-group {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
         .btn-primary {
-            width: 100%;
+            flex: 1;
             background: linear-gradient(135deg, var(--theme-primary), var(--theme-primary-hover));
             color: #FFFFFF;
             font-family: var(--font-body);
             font-weight: 600;
-            font-size: 1.05rem;
+            font-size: 1rem;
             padding: 1rem;
             border: none;
             border-radius: 8px;
@@ -247,7 +231,6 @@
             justify-content: center;
             align-items: center;
             gap: 0.5rem;
-            margin-top: 1.5rem;
             box-shadow: 0 4px 12px rgba(var(--theme-primary-rgb), 0.3);
         }
 
@@ -265,6 +248,19 @@
             opacity: 0.8;
             cursor: not-allowed;
             transform: none;
+        }
+
+        /* Special Styling for Joke Button */
+        #joke-btn {
+            background: rgba(var(--theme-primary-rgb), 0.1);
+            color: var(--theme-primary);
+            border: 2px solid var(--theme-primary);
+            box-shadow: none;
+        }
+        #joke-btn:hover {
+            background: rgba(var(--theme-primary-rgb), 0.2);
+            box-shadow: 0 4px 12px rgba(var(--theme-primary-rgb), 0.2);
+            transform: translateY(-2px);
         }
 
         .btn-secondary {
@@ -300,9 +296,7 @@
         }
 
         @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
+            to { transform: rotate(360deg); }
         }
 
         .is-loading .spinner {
@@ -360,7 +354,6 @@
             bottom: 0;
             width: 100%;
             background-color: rgba(255, 255, 255, 0.4);
-            /* Translucent footer */
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
             border-top: 1px solid rgba(255, 255, 255, 0.4);
@@ -466,15 +459,8 @@
 
         /* ANIMATIONS */
         @keyframes fadeIn {
-            from {
-                opacity: 0;
-                transform: translateY(10px);
-            }
-
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
         /* RESPONSIVE */
@@ -482,14 +468,15 @@
             .app-card {
                 padding: 2rem 1.5rem;
             }
-
             .compliment-text {
                 font-size: 1.2rem;
+            }
+            .button-group {
+                flex-direction: column;
             }
         }
     </style>
 </head>
-
 <body>
 
     <!-- DYNAMIC BACKGROUND -->
@@ -500,14 +487,13 @@
         <div class="app-card">
             <div class="header-section">
                 <h1>Compliment Generator</h1>
-                <p>Brighten someone's day with AI-crafted kindness.</p>
+                <p>Brighten (or ruin) someone's day with AI-crafted words.</p>
             </div>
 
             <form id="compliment-form">
                 <div class="form-group">
                     <label for="targetName">Who is this for?</label>
-                    <input type="text" id="targetName" class="form-control" placeholder="e.g., Alex, Sarah, My Team"
-                        required>
+                    <input type="text" id="targetName" class="form-control" placeholder="e.g., Alex, Sarah, My Team" required>
                 </div>
 
                 <div class="form-group">
@@ -523,8 +509,8 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="tone">Desired Tone</label>
-                    <select id="tone" class="form-control" required>
+                    <label for="tone">Desired Tone (For Compliments)</label>
+                    <select id="tone" class="form-control">
                         <option value="" disabled selected>Select a tone...</option>
                         <option value="sweet">Sweet & Genuine</option>
                         <option value="funny">Funny & Witty</option>
@@ -533,26 +519,38 @@
                     </select>
                 </div>
 
-                <button type="submit" id="generate-btn" class="btn-primary">
-                    <span class="btn-text">Generate Compliment</span>
-                    <span class="spinner"></span>
-                    <span class="loading-text" style="display: none;">Crafting...</span>
-                </button>
+                <div class="form-group">
+                    <label for="joke-tone">Desired Tone (For Jokes)</label>
+                    <select id="joke-tone" class="form-control">
+                        <option value="" disabled selected>Select a joke tone...</option>
+                        <option value="savage">Savage Roast</option>
+                        <option value="passive">Passive Aggressive</option>
+                        <option value="dark">Dark & Twisted</option>
+                        <option value="sarcastic">Sarcastic & Dry</option>
+                    </select>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" id="generate-btn" class="btn-primary">
+                        <span class="btn-text">Compliment</span>
+                        <span class="spinner"></span>
+                        <span class="loading-text" style="display: none;">Crafting...</span>
+                    </button>
+                    
+                    <button type="button" id="joke-btn" class="btn-primary">
+                        <span class="btn-text">Roast / Joke</span>
+                    </button>
+                </div>
             </form>
 
             <!-- RESULTS AREA -->
             <div id="results-area" class="results-area">
                 <p id="compliment-output" class="compliment-text"></p>
                 <button id="copy-btn" class="btn-secondary">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                        <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                    </svg>
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                     Copy to Clipboard
                 </button>
-                <span id="copy-success"
-                    style="display:none; color: var(--theme-primary); font-size: 0.85rem; margin-left: 10px; font-weight: 500;">Copied!</span>
+                <span id="copy-success" style="display:none; color: var(--theme-primary); font-size: 0.85rem; margin-left: 10px; font-weight: 500;">Copied!</span>
             </div>
         </div>
     </main>
@@ -570,13 +568,11 @@
             <div class="modal-body">
                 <p>This tool captures your input and securely sends it via webhook to an automated workflow.</p>
                 <br>
-                <p>From there, an AI engine processes the relationship and tone to craft a highly personalized
-                    compliment, returning it instantly to your screen.</p>
+                <p>From there, an AI engine processes the relationship and tone to craft a highly personalized message, returning it instantly to your screen.</p>
                 <br>
                 <p>Want to build intelligent workflows like this for your own business?</p>
             </div>
-            <a href="#" class="cta-button" onclick="alert('Redirecting to calendar...'); return false;">Book a System
-                Consultation</a>
+            <a href="#" class="cta-button" id="booking-btn">Book a System Consultation</a>
         </div>
     </div>
 
@@ -586,21 +582,24 @@
             // --- DOM Elements ---
             const form = document.getElementById('compliment-form');
             const submitBtn = document.getElementById('generate-btn');
+            const jokeBtn = document.getElementById('joke-btn');
             const btnText = submitBtn.querySelector('.btn-text');
             const loadingText = submitBtn.querySelector('.loading-text');
             const resultsArea = document.getElementById('results-area');
             const complimentOutput = document.getElementById('compliment-output');
             const copyBtn = document.getElementById('copy-btn');
             const copySuccess = document.getElementById('copy-success');
-
+            const relationshipSelect = document.getElementById('relationship');
+            const nameInput = document.getElementById('targetName');
+            
             // Modal Elements
             const modal = document.getElementById('info-modal');
             const modalTrigger = document.getElementById('how-it-works-trigger');
             const modalClose = document.getElementById('close-modal');
+            const bookingBtn = document.getElementById('booking-btn');
 
             // --- Dynamic Background Logic ---
             const bgContainer = document.getElementById('floating-bg');
-            const relationshipSelect = document.getElementById('relationship');
             let spawnInterval;
 
             const bgThemes = {
@@ -609,14 +608,14 @@
                 colleague: { emojis: ['👔', '💼', '📈', '☕'], class: 'bg-colleague' },
                 family: { emojis: ['🔗', '🤝', '♾️', '🏡'], class: 'bg-family' },
                 stranger: { emojis: ['✨', '👋', '🌟'], class: '' },
-                default: { emojis: [], class: '' }
+                default: { emojis: ['✨', '💫', '💭', '🫧'], class: 'bg-default' }
             };
 
             function updateBackground(rel) {
                 // Clear previous interval and elements
                 clearInterval(spawnInterval);
                 bgContainer.innerHTML = '';
-
+                
                 // Reset body class and apply new one
                 document.body.className = '';
                 const theme = bgThemes[rel] || bgThemes['default'];
@@ -631,12 +630,12 @@
                         el.className = 'floating-item';
                         // Pick random emoji
                         el.innerText = theme.emojis[Math.floor(Math.random() * theme.emojis.length)];
-
+                        
                         // Randomize horizontal position, duration, and size
                         el.style.left = Math.random() * 100 + 'vw';
                         el.style.animationDuration = (Math.random() * 5 + 7) + 's'; // 7 to 12 seconds
                         el.style.fontSize = (Math.random() * 2 + 1.5) + 'rem'; // 1.5rem to 3.5rem
-
+                        
                         bgContainer.appendChild(el);
 
                         // Cleanup element after animation completes
@@ -644,10 +643,13 @@
                             if (el.parentNode === bgContainer) {
                                 el.remove();
                             }
-                        }, 13000);
+                        }, 13000); 
                     }, 600); // Spawn every 600ms
                 }
             }
+
+            // Initialize default background immediately
+            updateBackground('default');
 
             // Listen for changes on the relationship dropdown
             relationshipSelect.addEventListener('change', (e) => {
@@ -655,28 +657,31 @@
             });
 
             // --- Webhook Configuration ---
-            // Replace this URL with your actual webhook endpoint
             const WEBHOOK_URL = 'https://your-webhook-url.com/webhook/generate-compliment';
 
-            // --- Form Submission Handler ---
+            // --- Form Submission Handler (Compliments) ---
             form.addEventListener('submit', async (e) => {
                 e.preventDefault();
 
-                // 1. Gather Input Data
+                const toneSelect = document.getElementById('tone');
+                
+                // Custom validation since we decoupled the two submit actions
+                if (!toneSelect.value) {
+                    toneSelect.setCustomValidity("Please select a tone for your compliment.");
+                    toneSelect.reportValidity();
+                    return;
+                } else {
+                    toneSelect.setCustomValidity("");
+                }
+
                 const payload = {
-                    name: document.getElementById('targetName').value.trim(),
-                    relationship: document.getElementById('relationship').value,
-                    tone: document.getElementById('tone').value
+                    name: nameInput.value.trim(),
+                    relationship: relationshipSelect.value,
+                    tone: toneSelect.value
                 };
 
-                // 2. Set Loading State
-                submitBtn.classList.add('is-loading');
-                submitBtn.disabled = true;
-                btnText.style.display = 'none';
-                loadingText.style.display = 'inline-block';
-                resultsArea.classList.remove('active');
+                setLoadingState(true);
 
-                // 3. Send POST Request to Webhook
                 try {
                     const response = await fetch(WEBHOOK_URL, {
                         method: 'POST',
@@ -688,38 +693,75 @@
                     });
 
                     let compliment = "";
-
                     if (response.ok) {
                         const data = await response.json();
-                        // Assuming the webhook returns { "compliment": "..." }
                         compliment = data.compliment || "Here is a wonderful compliment just for you!";
                     } else {
-                        // Fallback logic for demonstration purposes if webhook isn't active
                         throw new Error('Webhook unavailable');
                     }
-
                     displayResult(compliment);
-
                 } catch (error) {
-                    console.warn("Webhook fetch failed, using fallback generation for demonstration.", error);
-
-                    // Fallback local generation to ensure UI remains testable
+                    console.warn("Webhook fetch failed, using fallback generation.", error);
                     setTimeout(() => {
                         const fallbackCompliment = generateFallbackCompliment(payload.name, payload.relationship, payload.tone);
                         displayResult(fallbackCompliment);
-                    }, 1200); // Simulate network delay
+                    }, 1200);
                 }
             });
 
-            // --- Helper: Display Result ---
-            function displayResult(text) {
-                // Remove loading state
-                submitBtn.classList.remove('is-loading');
-                submitBtn.disabled = false;
-                btnText.style.display = 'inline-block';
-                loadingText.style.display = 'none';
+            // --- Joke / Roast Button Handler ---
+            jokeBtn.addEventListener('click', () => {
+                const jokeToneSelect = document.getElementById('joke-tone');
+                
+                // Custom validation to ensure required fields are filled without triggering compliment validation
+                if (!nameInput.value) { nameInput.reportValidity(); return; }
+                if (!relationshipSelect.value) { relationshipSelect.reportValidity(); return; }
+                
+                if (!jokeToneSelect.value) {
+                    jokeToneSelect.setCustomValidity("Please select a tone for your joke.");
+                    jokeToneSelect.reportValidity();
+                    return;
+                } else {
+                    jokeToneSelect.setCustomValidity("");
+                }
 
-                // Render result
+                const name = nameInput.value.trim();
+                const rel = relationshipSelect.value;
+                const jokeTone = jokeToneSelect.value;
+                
+                // Set temporary UI state for the joke button
+                const originalText = jokeBtn.querySelector('.btn-text').innerText;
+                jokeBtn.querySelector('.btn-text').innerText = "Cooking...";
+                jokeBtn.disabled = true;
+                resultsArea.classList.remove('active');
+
+                // Simulate slight delay for effect
+                setTimeout(() => {
+                    const jokeText = generateEdgyJoke(name, rel, jokeTone);
+                    displayResult(jokeText);
+                    jokeBtn.querySelector('.btn-text').innerText = originalText;
+                    jokeBtn.disabled = false;
+                }, 800);
+            });
+
+            // --- UI Helpers ---
+            function setLoadingState(isLoading) {
+                if (isLoading) {
+                    submitBtn.classList.add('is-loading');
+                    submitBtn.disabled = true;
+                    btnText.style.display = 'none';
+                    loadingText.style.display = 'inline-block';
+                    resultsArea.classList.remove('active');
+                } else {
+                    submitBtn.classList.remove('is-loading');
+                    submitBtn.disabled = false;
+                    btnText.style.display = 'inline-block';
+                    loadingText.style.display = 'none';
+                }
+            }
+
+            function displayResult(text) {
+                setLoadingState(false);
                 complimentOutput.textContent = text;
                 resultsArea.classList.add('active');
             }
@@ -727,22 +769,15 @@
             // --- Copy to Clipboard Handler ---
             copyBtn.addEventListener('click', () => {
                 const textToCopy = complimentOutput.textContent;
-
-                // Using document.execCommand('copy') as requested for iframe compatibility
                 const textArea = document.createElement("textarea");
                 textArea.value = textToCopy;
-
-                // Move out of screen
                 textArea.style.position = "absolute";
                 textArea.style.left = "-999999px";
-
                 document.body.appendChild(textArea);
                 textArea.select();
-
+                
                 try {
                     document.execCommand('copy');
-
-                    // Visual feedback
                     copySuccess.style.display = 'inline';
                     setTimeout(() => {
                         copySuccess.style.display = 'none';
@@ -759,56 +794,146 @@
                 e.preventDefault();
                 modal.classList.add('active');
             });
-
             modalClose.addEventListener('click', () => {
                 modal.classList.remove('active');
             });
-
-            // Close modal when clicking outside content
             modal.addEventListener('click', (e) => {
                 if (e.target === modal) {
                     modal.classList.remove('active');
                 }
             });
+            bookingBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                bookingBtn.innerText = "Redirecting...";
+                setTimeout(() => { bookingBtn.innerText = "Book a System Consultation"; }, 2000);
+            });
 
-            // --- Fallback Content Generator (For UI testing without live webhook) ---
+            // --- Content Generators ---
+            function generateEdgyJoke(name, relationship, tone) {
+                const jokes = {
+                    partner: {
+                        savage: [
+                            `${name}, I love you more than I love being right. And if you know me, you know that's a massive sacrifice.`,
+                            `I'm not saying I settled, ${name}, but you're definitely the 'we have food at home' version of my dream partner.`
+                        ],
+                        passive: [
+                            `It's so brave how you just wear whatever you want, ${name}. Truly inspiring confidence.`,
+                            `I love how you don't let being wrong stop you from arguing, ${name}.`
+                        ],
+                        dark: [
+                            `I'd take a bullet for you, ${name}. Well, maybe not in the chest, but definitely in the foot. A graze, tops.`,
+                            `Our relationship is built on mutual trust, respect, and our shared hatred for absolutely everyone else, ${name}.`
+                        ],
+                        sarcastic: [
+                            `Oh, you're explaining something to me again, ${name}? Let me grab my notepad, I'm sure it's fascinating.`,
+                            `You're absolutely right, ${name}. Just like always. I don't know why I even bother having my own thoughts.`
+                        ]
+                    },
+                    friend: {
+                        savage: [
+                            `We're going to be best friends forever, ${name}, mostly because you already know too much and I can't afford a hitman.`,
+                            `${name}, we’ve been friends for so long I've genuinely forgotten which one of us is the bad influence. Oh wait, it's you.`
+                        ],
+                        passive: [
+                            `I love hanging out with you, ${name}. It always makes me feel so much better about my own life choices.`,
+                            `You're so lucky, ${name}. You just don't care about what anyone thinks of your life.`
+                        ],
+                        dark: [
+                            `${name}, if we were in a horror movie, I'd definitely trip you to save myself. No hard feelings.`,
+                            `${name}, you're the kind of friend I'd help hide a body. But let's be honest, you'd be the one who tripped and died in the process.`
+                        ],
+                        sarcastic: [
+                            `Yeah, ${name}, your story about your dream last night was riveting. Please, tell me more.`,
+                            `I am completely shocked that your terrible idea didn't work out perfectly, ${name}. Shocked.`
+                        ]
+                    },
+                    colleague: {
+                        savage: [
+                            `I was going to write a joke about your work ethic, ${name}, but I was worried you'd never actually get around to reading it.`,
+                            `${name}, I've seen more signs of intelligent life in my spam folder than in your recent reports.`
+                        ],
+                        passive: [
+                            `${name}, you are living, breathing proof that 'fake it till you make it' is an actual, viable career strategy.`,
+                            `Per my last email, ${name}... oh never mind, I know reading isn't your strong suit.`
+                        ],
+                        dark: [
+                            `I genuinely mean this, ${name}: the absolute best part of my workday is watching your status turn to offline.`,
+                            `${name}, I'm not saying I want you fired, but if you suddenly vanished, I'd probably just take your office chair and not ask questions.`
+                        ],
+                        sarcastic: [
+                            `Great job on that project, ${name}. Truly groundbreaking work that a middle schooler could have done.`,
+                            `Oh yes, ${name}, let's definitely schedule another hour-long meeting to discuss something that could have been a 2-sentence email.`
+                        ]
+                    },
+                    family: {
+                        savage: [
+                            `I smile because we're family, ${name}. I laugh because there's absolutely nothing you can do about it.`,
+                            `${name}, it's honestly a miracle you share the same gene pool as the rest of us. You really dragged the average down.`
+                        ],
+                        passive: [
+                            `It’s so nice seeing you, ${name}. You’re looking... well, exactly how I expected you to look.`,
+                            `I love how you just speak your mind, ${name}, without the burden of actual facts or logic.`
+                        ],
+                        dark: [
+                            `They say blood is thicker than water, ${name}, but honestly, it's just a lot harder to clean out of the carpet.`,
+                            `${name}, checking our family tree makes me want to become an orphan retroactively.`
+                        ],
+                        sarcastic: [
+                            `Oh, ${name} has an opinion on how to run the family? Everyone stop and listen to the oracle.`,
+                            `Your holiday updates are always the highlight of my year, ${name}. So eventful.`
+                        ]
+                    },
+                    stranger: {
+                        savage: [
+                            `I don't know you, ${name}, but looking at you feels like my eyes just stubbed their toe.`,
+                            `No offense ${name}, but you look exactly like the kind of person who aggressively claps when the airplane lands.`
+                        ],
+                        passive: [
+                            `I'm sure you have a great personality, ${name}, since you clearly had to compensate for everything else.`,
+                            `You have a very... distinct aura, ${name}. Good luck with that.`
+                        ],
+                        dark: [
+                            `I was going to thoroughly roast you, ${name}, but it clearly looks like life already beat me to the punch.`,
+                            `${name}, I bet your guardian angel drinks heavily.`
+                        ],
+                        sarcastic: [
+                            `Wow, ${name}, you must be a blast at parties. The ones you invite yourself to, I mean.`,
+                            `I can tell from a single glance, ${name}, that you're just overflowing with fascinating insights.`
+                        ]
+                    }
+                };
+                
+                const relationshipJokes = jokes[relationship] || jokes['stranger'];
+                const selectedJokes = relationshipJokes[tone] || relationshipJokes['savage'];
+                
+                return selectedJokes[Math.floor(Math.random() * selectedJokes.length)];
+            }
+
             function generateFallbackCompliment(name, relationship, tone) {
                 const relText = relationship === 'stranger' ? 'person' : relationship;
                 const partnerText = relationship === 'partner' ? 'partner' : relText;
-
                 const templates = {
                     funny: [
                         `${name}, you're the only ${relText} I'd share my snacks with, and that's saying a lot.`,
-                        `I'm not saying you're the best ${relText} ever, ${name}, but I'd definitely bet my favorite coffee on it.`,
-                        `${name}, if being awesome was a crime, you'd be serving a life sentence as my ${relText}.`,
-                        `I love how we can just look at each other and know exactly what the other is thinking, ${name}. Usually it's about food.`
+                        `I'm not saying you're the best ${relText} ever, ${name}, but I'd definitely bet my favorite coffee on it.`
                     ],
                     sweet: [
                         `${name}, your presence lights up every room. Being your ${partnerText} is a true gift.`,
-                        `I just wanted to remind you, ${name}, how much joy you bring to my life. You're such a wonderful ${relText}.`,
-                        `${name}, you have a heart of gold. I'm so incredibly lucky to have a ${relText} like you in my corner.`,
-                        `Every time I think of you, ${name}, I can't help but smile. You make the world brighter just by being in it.`
+                        `${name}, you have a heart of gold. I'm so incredibly lucky to have a ${relText} like you in my corner.`
                     ],
                     professional: [
                         `${name}, your dedication and insight make you an invaluable ${relText}. Thank you for everything you do.`,
-                        `I truly appreciate your hard work and positive attitude, ${name}. You set a phenomenal example as a ${relText}.`,
-                        `${name}, your problem-solving skills and teamwork are truly unmatched. I'm proud to know you as a ${relText}.`,
-                        `Thank you, ${name}, for consistently bringing your A-game. It makes working with you an absolute pleasure.`
+                        `${name}, your problem-solving skills and teamwork are truly unmatched. I'm proud to know you as a ${relText}.`
                     ],
                     poetic: [
                         `${name}, like a rare constellation, your spirit brings guidance and beauty to my world as a ${relText}.`,
-                        `In the symphony of life, ${name}, your melody is the one that resonates most beautifully with me.`,
-                        `${name}, your kindness is a gentle breeze that makes the world a softer place for everyone around you.`,
                         `To know you, ${name}, is to witness poetry in motion. You elevate the very concept of a ${relText}.`
                     ]
                 };
-
                 const selectedTemplates = templates[tone] || templates['sweet'];
-                const randomIndex = Math.floor(Math.random() * selectedTemplates.length);
-                return selectedTemplates[randomIndex];
+                return selectedTemplates[Math.floor(Math.random() * selectedTemplates.length)];
             }
         });
     </script>
 </body>
-
 </html>
